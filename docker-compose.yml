@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: phegon_hotel_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5455:5432"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hotel-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5455/phegon_hotel_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "4040:4040"
+    depends_on:
+      - postgres
+
+volumes:
+  db_data:
